@@ -6,6 +6,10 @@ import {
   LowRiskTrend,
 } from "../components/RiskTrend";
 
+import PriceHistoryChart from "../components/PriceHistoryChart";
+
+<PriceHistoryChart asset="BTC" />
+
 export default function RiskAlerts() {
   const [coins, setCoins] = useState([]);
   const [selectedRisk, setSelectedRisk] = useState(null);

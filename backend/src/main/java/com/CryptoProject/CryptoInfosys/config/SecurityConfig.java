@@ -50,6 +50,7 @@ public class SecurityConfig {
 
                 // 🔥 MARKET DATA (CoinGecko proxy)
                 .requestMatchers("/api/market/**").permitAll()
+                .requestMatchers("/api/prices/**").permitAll()
 
                 // 🔐 PROTECTED ENDPOINTS
                 .requestMatchers("/holdings/**").authenticated()

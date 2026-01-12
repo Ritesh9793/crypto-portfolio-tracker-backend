@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import DashboardLayout from "../layout/DashboardLayout";
 import api from "../api/axios";
 import Sparkline from "../components/Sparkline";
+import PriceHistoryChart from "../components/PriceHistoryChart";
 
 export default function Pricing() {
   const [prices, setPrices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedAsset, setSelectedAsset] = useState(null);
 
   const fetchPrices = async () => {
     try {
@@ -32,7 +34,7 @@ export default function Pricing() {
             Live Crypto Pricing
           </h1>
           <p className="text-gray-400 mt-2">
-            Real-time market prices powered by CoinGecko
+            Market prices and historical trends
           </p>
         </div>
 
@@ -53,7 +55,7 @@ export default function Pricing() {
             <tbody>
               {loading && (
                 <tr>
-                  <td colSpan="5" className="py-10 text-center text-gray-400">
+                  <td colSpan="6" className="py-10 text-center text-gray-400">
                     Loading prices...
                   </td>
                 </tr>
@@ -63,10 +65,24 @@ export default function Pricing() {
                 prices.map((p) => (
                   <tr
                     key={p.id}
-                    className="border-b border-white/5 hover:bg-white/5 transition-all"
+                    onClick={() =>
+                      setSelectedAsset(p.symbol.toUpperCase())
+                    }
+                    className={`
+                      border-b border-white/5
+                      hover:bg-white/5
+                      transition-all
+                      cursor-pointer
+                      ${selectedAsset === p.symbol.toUpperCase()
+                        ? "bg-white/10"
+                        : ""}
+                    `}
                   >
                     <td className="py-4 font-semibold">{p.name}</td>
-                    <td className="uppercase text-gray-400">{p.symbol}</td>
+
+                    <td className="uppercase text-gray-400">
+                      {p.symbol}
+                    </td>
 
                     <td className="text-green-400 font-semibold">
                       ₹{p.priceUsd.toLocaleString("en-IN")}
@@ -81,24 +97,29 @@ export default function Pricing() {
                     >
                       {p.change24h.toFixed(2)}%
                     </td>
-                    
-
 
                     <td className="text-gray-300">
                       ₹{p.marketCap.toLocaleString("en-IN")}
                     </td>
+
                     <td>
-  <Sparkline
-    data={p.sparkline}
-    positive={p.change24h >= 0}
-  />
-</td>
-                    
+                      <Sparkline
+                        data={p.sparkline}
+                        positive={p.change24h >= 0}
+                      />
+                    </td>
                   </tr>
                 ))}
             </tbody>
           </table>
         </div>
+
+        {/* PRICE HISTORY CHART */}
+        {selectedAsset && (
+          <div className="mt-12">
+            <PriceHistoryChart asset={selectedAsset} />
+          </div>
+        )}
 
       </div>
     </DashboardLayout>
