@@ -9,6 +9,9 @@ import com.CryptoProject.CryptoInfosys.service.PnLService;
 
 import java.util.List;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -50,6 +53,21 @@ public class PnLController {
         User user = userRepo.findByEmail(email).orElseThrow();
 
         return pnlService.calculatePnLTimeline(user.getId());
+    }
+
+    @GetMapping(value = "/export", produces = "text/csv")
+    public ResponseEntity<String> exportPnL(
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        String token = authHeader.substring(7);
+        String email = jwtUtils.extractUsername(token);
+
+        User user = userRepo.findByEmail(email).orElseThrow();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=pnl-report.csv")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(pnlService.exportCsv(user.getId()));
     }
 
 }

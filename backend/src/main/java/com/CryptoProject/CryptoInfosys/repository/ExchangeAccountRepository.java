@@ -12,4 +12,6 @@ public interface ExchangeAccountRepository extends JpaRepository<ExchangeAccount
     List<ExchangeAccount> findByUser(User user);
 
     List<ExchangeAccount> findByUserEmail(String userEmail);
+
+    void deleteByUserAndExchangeIgnoreCase(User user, String exchange);
 }

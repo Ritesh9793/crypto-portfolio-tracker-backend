@@ -9,7 +9,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.HashMap;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class JwtUtils {
@@ -20,16 +22,34 @@ public class JwtUtils {
     @Value("${jwt.expirationMs}")
     private long jwtExpirationMs;
 
+    @Value("${jwt.refreshExpirationMs}")
+    private long refreshExpirationMs;
+
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
     // 🔥 ADD THIS METHOD (THIS FIXES YOUR ERROR)
     public String generateToken(String username) {
+        return generateAccessToken(username);
+    }
+
+    public String generateAccessToken(String username) {
+        return generateToken(username, jwtExpirationMs, "access");
+    }
+
+    public String generateRefreshToken(String username) {
+        return generateToken(username, refreshExpirationMs, "refresh");
+    }
+
+    private String generateToken(String username, long expirationMs, String type) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", type);
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -49,6 +69,10 @@ public class JwtUtils {
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    }
+
+    public boolean isRefreshToken(String token) {
+        return "refresh".equals(extractAllClaims(token).get("type", String.class));
     }
 
     private Claims extractAllClaims(String token) {

@@ -6,4 +6,6 @@ public class RiskAlertDTO {
     public String symbol;
     public String riskLevel; // LOW / MEDIUM / HIGH
     public String reason;
+    public String alertType;
+    public String source;
 }

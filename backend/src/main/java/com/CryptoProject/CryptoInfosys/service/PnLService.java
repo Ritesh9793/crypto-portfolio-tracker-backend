@@ -11,6 +11,7 @@ import com.CryptoProject.CryptoInfosys.model.TradeSide;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PnLService {
@@ -240,5 +241,21 @@ public class PnLService {
     private Long getUserIdByEmail(String email) {
         return tradeRepo.findUserIdByEmail(email);
     }
-    
+
+    public String exportCsv(Long userId) {
+        List<PnLDTO> assets = calculatePnL(userId).assets;
+        String header = "Asset,Quantity,Avg Buy Price,Current Price,Unrealized PnL,Realized PnL";
+        String rows = assets.stream()
+                .map(asset -> String.join(",",
+                        asset.asset,
+                        String.valueOf(asset.quantity),
+                        String.valueOf(asset.avgBuyPrice),
+                        String.valueOf(asset.currentPrice),
+                        String.valueOf(asset.unrealizedPnL),
+                        String.valueOf(asset.realizedPnL)))
+                .collect(Collectors.joining("\n"));
+
+        return rows.isBlank() ? header + "\n" : header + "\n" + rows + "\n";
+    }
+
 }

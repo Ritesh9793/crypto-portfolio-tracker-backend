@@ -2,6 +2,7 @@ package com.CryptoProject.CryptoInfosys.controller;
 
 import com.CryptoProject.CryptoInfosys.service.PricingService;
 import com.CryptoProject.CryptoInfosys.service.RiskAnalysisService;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,13 +15,14 @@ public class RiskAlertController {
 
     public RiskAlertController(
             PricingService pricingService,
-            RiskAnalysisService riskService) {
+            RiskAnalysisService riskService
+    ) {
         this.pricingService = pricingService;
         this.riskService = riskService;
     }
 
     @GetMapping
-    public Object getRiskAlerts() {
-        return riskService.analyze(pricingService.getPrices());
+    public Object getRiskAlerts(Authentication authentication) {
+        return riskService.analyzeForUser(authentication.getName(), pricingService.getPrices());
     }
 }

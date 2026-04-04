@@ -3,14 +3,16 @@ package com.CryptoProject.CryptoInfosys.dto;
 public class AuthResponse {
 
     private String token;
+    private String refreshToken;
     private String type;
     private String email;
     private String name;
 
     public AuthResponse() {}
 
-    public AuthResponse(String token, String type, String email, String name) {
+    public AuthResponse(String token, String refreshToken, String type, String email, String name) {
         this.token = token;
+        this.refreshToken = refreshToken;
         this.type = type;
         this.email = email;
         this.name = name;
@@ -22,6 +24,14 @@ public class AuthResponse {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public String getType() {

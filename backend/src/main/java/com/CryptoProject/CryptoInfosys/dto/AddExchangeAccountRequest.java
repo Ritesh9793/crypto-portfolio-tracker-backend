@@ -5,6 +5,8 @@ public class AddExchangeAccountRequest {
     private String exchange;
     private String apiKey;
     private String apiSecret;
+    private String label;
+    private String baseUrl;
 
     public String getExchange() {
         return exchange;
@@ -28,5 +30,21 @@ public class AddExchangeAccountRequest {
 
     public void setApiSecret(String apiSecret) {
         this.apiSecret = apiSecret;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 }
